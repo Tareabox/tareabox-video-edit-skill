@@ -5,11 +5,19 @@ description: Create videos using the Tareabox effects pack for HyperFrames. Use 
 
 # Tareabox Video Edit — for HyperFrames
 
-> ⚠️ **Skill experimental no oficial.** Es una skill comunitaria creada por **Natalie Digital** (Natalie Abadie), tareabox.com. NO está afiliada con Heygen ni con Anthropic. Soy **aficionada, no afiliada** 😄.
+> ⚠️ **Skill experimental en desarrollo activo — leer antes de usar**
 >
-> **"HyperFrames" es marca de Heygen Inc.** (Apache 2.0). **"Tareabox"** es marca de Natalie Digital. Esta skill solo es compatible con HyperFrames porque me gusta lo que están haciendo — no implica endorsement ni partnership.
+> Esta skill es un proyecto comunitario creado por **Natalie Digital** (tareabox.com). NO está afiliada con Heygen ni con Anthropic. Soy **aficionada, no afiliada** 😄.
 >
-> Se distribuye **AS IS, sin garantía**. Si algo no anda como esperás, no me hago responsable. Sugerencias y feedback son bienvenidos; demandas y reclamos legales no. Ver [LICENSE](LICENSE).
+> **Está en evolución constante:**
+> - Voy iterando, mejorando y cambiando cosas a medida que aprendo HyperFrames y Claude Code.
+> - El comportamiento de la skill puede cambiar entre versiones sin previo aviso.
+> - Algunas partes pueden funcionar mejor que otras según el caso.
+> - No es una herramienta pulida de producción — es una herramienta de creator que comparto open source.
+>
+> **"HyperFrames"** es marca de Heygen Inc. (Apache 2.0). **"Tareabox"** es marca de Natalie Digital. Esta skill solo es compatible con HyperFrames porque me gusta el framework — no implica endorsement ni partnership.
+>
+> Se distribuye **AS IS, sin garantía**. Si algo no anda como esperás, no me hago responsable. Sugerencias y feedback son bienvenidos; demandas y reclamos legales no. Ver [LICENSE](LICENSE) (copyright legal: Natalie Abadie).
 
 This skill helps a user create videos using the **Tareabox effects pack** — a
 registry of 100+ ready-made video blocks that run on **HyperFrames** (Heygen's

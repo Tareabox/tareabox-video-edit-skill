@@ -1,6 +1,6 @@
 # tareabox-video-edit (Claude Code Skill)
 
-> ⚠️ **Skill experimental no oficial.** Es una herramienta personal creada por Natalie Digital que le pide a Claude Code que instale HyperFrames + el catálogo Tareabox de video blocks. Es 100% comunidad, no es oficial de Heygen ni de Anthropic.
+> ⚠️ **Skill experimental en desarrollo activo.** Herramienta personal creada por Natalie Digital que le pide a Claude Code que instale HyperFrames + el catálogo Tareabox. Cambia constantemente a medida que itero — no es producto final, es un experimento público. 100% comunidad, NO oficial de Heygen ni de Anthropic.
 
 ## Qué hace esta skill
 
@@ -39,12 +39,13 @@ Claude va a usar la skill para guiarte paso a paso.
 
 ## Disclaimer
 
-- ⚠️ Esta skill es **experimental**, hecha por una persona que aprende y comparte lo que le funciona
+- ⚠️ **Experimental + en desarrollo activo** — cambia frecuentemente, no es producción
+- 🔄 **Puede romper backward compat** entre versiones sin warning
 - 🚫 **No me hago responsable** si algo no anda como esperás
 - 🚫 **No tengo obligación de dar soporte** o aceptar PRs (aunque sugerencias son bienvenidas)
 - ⚖️ HyperFrames es marca registrada de **Heygen Inc.** — soy **aficionada, no afiliada** 😄
 - ⚖️ Tareabox Catalog se distribuye bajo su propia licencia (ver el repo del catálogo)
-- ⚖️ Esta skill se distribuye bajo MIT (ver [LICENSE](LICENSE)) — podés copiarla, modificarla y compartirla
+- ⚖️ Esta skill se distribuye bajo MIT (ver [LICENSE](LICENSE) — copyright legal: Natalie Abadie)
 
 ## Créditos
 
