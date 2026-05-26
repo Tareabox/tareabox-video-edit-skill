@@ -45,7 +45,7 @@ Claude va a usar la skill para guiarte paso a paso.
 - 🚫 **No tengo obligación de dar soporte** o aceptar PRs (aunque sugerencias son bienvenidas)
 - ⚖️ HyperFrames es marca registrada de **Heygen Inc.** — soy **aficionada, no afiliada** 😄
 - ⚖️ Tareabox Catalog se distribuye bajo su propia licencia (ver el repo del catálogo)
-- ⚖️ Esta skill se distribuye bajo MIT (ver [LICENSE](LICENSE) — copyright legal: Natalie Abadie)
+- ⚖️ Esta skill se distribuye bajo MIT (ver [LICENSE](LICENSE))
 
 ## Créditos
 

@@ -17,7 +17,7 @@ description: Create videos using the Tareabox effects pack for HyperFrames. Use 
 >
 > **"HyperFrames"** es marca de Heygen Inc. (Apache 2.0). **"Tareabox"** es marca de Natalie Digital. Esta skill solo es compatible con HyperFrames porque me gusta el framework — no implica endorsement ni partnership.
 >
-> Se distribuye **AS IS, sin garantía**. Si algo no anda como esperás, no me hago responsable. Sugerencias y feedback son bienvenidos; demandas y reclamos legales no. Ver [LICENSE](LICENSE) (copyright legal: Natalie Abadie).
+> Se distribuye **AS IS, sin garantía**. Si algo no anda como esperás, no me hago responsable. Sugerencias y feedback son bienvenidos; demandas y reclamos legales no. Ver [LICENSE](LICENSE).
 
 This skill helps a user create videos using the **Tareabox effects pack** — a
 registry of 100+ ready-made video blocks that run on **HyperFrames** (Heygen's
