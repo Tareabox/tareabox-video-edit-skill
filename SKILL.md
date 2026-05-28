@@ -20,7 +20,7 @@ description: Create videos using the Tareabox effects pack for HyperFrames. Use 
 > Se distribuye **AS IS, sin garantía**. Si algo no anda como esperás, no me hago responsable. Sugerencias y feedback son bienvenidos; demandas y reclamos legales no. Ver [LICENSE](LICENSE).
 
 This skill helps a user create videos using the **Tareabox effects pack** — a
-registry of 100+ ready-made video blocks that run on **HyperFrames** (Heygen's
+registry of 100+ ready-made blocks and components that run on **HyperFrames** (Heygen's
 open-source video framework, Apache 2.0).
 
 Tareabox registry URL:
@@ -150,10 +150,14 @@ They install the same way (`npx hyperframes add <name>`) but you **wire them dif
 
 ### Tareabox split
 
-| Type | Count | Categories | Background | How to wire |
-|---|---|---|---|---|
-| **Block** | 61 | `conversationapp`, `layout` | Own bg (full-screen scene) | `data-composition-src` referencing `compositions/<name>.html` |
-| **Component** | 72 | `text`, `visual`, `data` | **Transparent** (overlay) | Paste HTML+CSS+JS inline into a host composition's `<div data-composition-id>` |
+| Type | Where the file lives | Background | How to wire |
+|---|---|---|---|
+| **Block** | `registry/blocks/` | Own bg (full-screen scene) | `data-composition-src` referencing `compositions/<name>.html` |
+| **Component** | `registry/components/` | **Transparent** (overlay) | Paste HTML+CSS+JS inline into a host composition's `<div data-composition-id>` |
+
+For the live list of items, types and categories:
+- Repo: `registry/registry.json` in [Tareabox/tareabox-catalog-free](https://github.com/Tareabox/tareabox-catalog-free)
+- Web catalog (rendered previews): https://tareabox.com/hf-catalog-free/
 
 ### How to tell them apart
 
@@ -646,23 +650,18 @@ tool? Do part A only.)
 
 ## The Tareabox pack
 
-133 items total — 61 blocks + 72 components — across 5 categories.
+Tareabox ships 100+ items — a mix of **blocks** (full-screen scenes with their
+own bg, mount via `data-composition-src`) and **components** (transparent
+overlays, paste inline into a host composition).
 
-**Blocks (61) — full-screen scenes with their own bg:**
-- **conversationapp** (24) — iMessage, WhatsApp, Slack, Discord, Instagram DM, Twitter, iOS/Android notifs
-- **layout** (37) — YouTube layouts, steps, comparisons, cards, tier lists, video PIP/hero/hook
-
-**Components (72) — transparent overlays meant to layer on top:**
-- **text** (46) — animated text effects (typewriter, warp, neon, kinetic, glitch, chapter…)
-- **visual** (22) — overlays, GIF stickers, callouts, indicators (zoom, timestamp, progress, keyboard)
-- **data** (4) — checklists, metric flip counters
-
-Full list: the registry's `registry.json` (`type` field tells you block vs component).
+For the live list with categories and counts, see:
+- Repo: `registry/registry.json` in [Tareabox/tareabox-catalog-free](https://github.com/Tareabox/tareabox-catalog-free)
+- Web catalog (rendered previews): https://tareabox.com/hf-catalog-free/
 
 Each item is a finished HyperFrames asset — reuse it, never recreate it.
-It has a `🎨 CUSTOMIZE HERE` section for colors and text. Blocks mount via
-`data-composition-src`; components paste inline into a host (see "Blocks vs
-Components" above and the official `hyperframes-registry` skill).
+It has a `🎨 CUSTOMIZE HERE` section for colors and text. See "Blocks vs
+Components" above and the official `hyperframes-registry` skill for the
+wiring patterns.
 
 ---
 
