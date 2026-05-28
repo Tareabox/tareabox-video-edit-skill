@@ -269,12 +269,20 @@ that case's path.
 
 ---
 
-## Editorial preferences (optional — Tareabox / Natalie Digital style)
+## Editorial preferences — Tareabox / Natalie Digital style (optional)
 
-> The following are **editorial decisions by the author**, not technical rules.
-> Follow them if you want videos in the Tareabox / Natalie Digital style.
-> Skip them if you have your own editorial criteria — the technical core
-> works without this section.
+> 💜 These are **the author's (Natalie Digital) personal editorial preferences**
+> for high-variety, engagement-focused videos. They are **NOT technical rules**
+> and **NOT mandatory** — the technical core works perfectly without this section.
+>
+> **What to do with this section:**
+> - **Use it as-is** if you want videos in the Tareabox / Natalie Digital style.
+> - **Ignore it** and follow your own editorial criteria.
+> - **Replace it** with your own preferences in a fork.
+> - **Delete it entirely** if you prefer the skill purely technical.
+>
+> The skill does not enforce any of these — they are suggestions that have
+> worked for the author's content.
 
 ### Visual variety
 
@@ -298,7 +306,7 @@ A video is NOT a slideshow of animated text. Apply these constraints to the bloc
 
 ### Block-selection examples (content → item)
 
-How Rule 12 ("Match block to content") looks in practice in the Tareabox style:
+How Rule 12 ("Match block to content") looks in practice in this preset:
 
 - *"Videos guardados"* → YouTube Watch Later layout, not a text block.
 - *"Me da pereza"* → avatar fullscreen (emotion), not neon text.
