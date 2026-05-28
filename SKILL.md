@@ -1,6 +1,6 @@
 ---
 name: tareabox-video-edit
-description: Create videos using the Tareabox effects pack for HyperFrames. Use when the user wants to make or edit a video with Tareabox blocks, set up a project for the Tareabox pack, browse/install Tareabox video blocks, or build a video from a Tareabox recipe.
+description: Create videos using the Tareabox effects pack for HyperFrames. Use when the user wants to make or edit a video with Tareabox blocks or components, set up a project for the Tareabox pack, browse/install Tareabox items, or build a video from a Tareabox recipe.
 ---
 
 # Tareabox Video Edit — for HyperFrames
@@ -26,6 +26,53 @@ open-source video framework, Apache 2.0).
 Tareabox registry URL:
 `https://raw.githubusercontent.com/Tareabox/tareabox-catalog-free/main/registry`
 
+HyperFrames official registry URL:
+`https://raw.githubusercontent.com/heygen-com/hyperframes/main/registry`
+
+### Dual registry — using items from both registries
+
+HyperFrames only supports **one registry URL** per project (`hyperframes.json`).
+Tareabox and HyperFrames official have **zero overlap** — they are complementary:
+
+- **Tareabox** → contenido terminado para armar el video (efectos listos
+  para usar, escenas full-screen, overlays).
+- **HF oficial** → producción low-level (transiciones, captions, data viz,
+  texturas, efectos puntuales) que sirven para complementar.
+
+When you need an item from the **other** registry, switch the registry
+temporarily:
+
+```bash
+# 1. Read current config
+ORIG=$(python3 -c "import json; print(json.load(open('hyperframes.json'))['registry'])")
+
+# 2. Switch to the other registry
+python3 -c "
+import json
+cfg = json.load(open('hyperframes.json'))
+cfg['registry'] = 'https://raw.githubusercontent.com/heygen-com/hyperframes/main/registry'
+json.dump(cfg, open('hyperframes.json','w'), indent=2)
+"
+
+# 3. Install the block
+npx hyperframes add <block-name>
+
+# 4. Restore original registry
+python3 -c "
+import json
+cfg = json.load(open('hyperframes.json'))
+cfg['registry'] = '$ORIG'
+json.dump(cfg, open('hyperframes.json','w'), indent=2)
+"
+```
+
+Once installed, items are local files in the project — they work regardless
+of which registry is currently set. The switch is only needed for the `add`
+command.
+
+**Rule of thumb:** Tareabox first (contenido), HF oficial cuando necesites
+algo low-level que Tareabox no tiene.
+
 ---
 
 ## Golden rules
@@ -42,20 +89,293 @@ Tareabox registry URL:
    answer your questions, and look at the result. Everything else — you do it.
 3. **Prefer Tareabox blocks.** When making a video, use the Tareabox registry
    first. Reuse blocks with `npx hyperframes add` — never rewrite a block.
-4. **Never edit a block's effect code.** Customize only via the block's
-   `🎨 CUSTOMIZE HERE` section (colors, text) — in the user's installed copy.
-5. **Demo media is a placeholder — never final.** Some blocks use video or
-   images and ship with SAMPLE media (sample b-roll, a sample talking head,
-   sample GIFs). That demo media must NEVER appear in the user's finished
-   video. Use the user's own media instead. If the user has no media for a
-   block, do not use that block — pick one that needs no media, or ask the
-   user for their footage.
-6. **One step at a time.** Ask, wait for the answer, then continue.
+4. **Customize via variables, not by editing the effect code.**
+   For the variable system, see the `hyperframes` skill (`SKILL.md` Variables section).
+   Tareabox blocks also expose a `🎨 CUSTOMIZE HERE` CSS block — same idea, easier to read at a glance.
+   Editing the effect code is allowed but riskier — use judgment.
+5. **Demo media is a placeholder — adapt it.**
+   Some items ship with sample video/images/audio. Replace them with what fits the video being made:
+   - Brand colors and tone from `design.md`
+   - Topic and copy from the script / user's intent
+   - User-provided assets if available
+   - Otherwise, choose generic stock that matches the topic
+
+   Demo media must never appear in the final video as-is.
+6. **One at a time. Verify. Move on.**
+   Do one thing, check it worked, then the next.
+   Ask one question and wait for the answer (or 2–3 if they're related).
+   No filler — save tokens.
 7. **Plan before building.** Never jump straight to building — first define the
    video with the user, then show a plan and get approval.
 8. **Check before continuing.** After each command, confirm it succeeded. If it
    fails, explain it plainly and stop — never push forward broken.
 9. **Do not skip steps.** Follow STEP 1 → 6 in order. STEP 6 is mandatory.
+10. **Read before you layer.** Before adding any persistent layer (avatar,
+    camera, PIP, overlay) on top of a block or sub-composition, read its
+    full source and understand its layout. Decide if the layer is needed,
+    if the block already handles it, or if it can be adapted. Place layers
+    only where they don't break the block's design or cover its content.
+    If you didn't read the block, you don't place anything on top of it.
+11. **Use HyperFrames skills — never guess.** This skill handles item
+    selection and workflow. Two HyperFrames skills carry the rules:
+    - `hyperframes` — HOW compositions work (structure, timeline, layout).
+    - `hyperframes-registry` — HOW to install + wire blocks and components
+      (`hyperframes add`, `data-composition-src` for blocks, paste-inline
+      for components, `hyperframes.json` paths).
+
+    Before writing any composition code or wiring an item, read the
+    required documents from the matching skill. Do not improvise,
+    assume, or invent composition rules. If a skill document covers the
+    topic, read it and follow it. See the catalog below.
+12. **Match block to content, not content to block.**
+    Choose the item that best SHOWS what the speaker is saying.
+    Think: what would a human editor cut to here?
+
+    For style-specific guidance (visual variety, avatar coverage,
+    rhythm check, content-matching examples, recipes), see the
+    optional **Editorial preferences** section below.
+
+---
+
+## Blocks vs Components (CRITICAL distinction)
+
+The Tareabox registry (and HyperFrames in general) has **two kinds of installable items**.
+They install the same way (`npx hyperframes add <name>`) but you **wire them differently**.
+
+> **Source:** `heygen-com/hyperframes/skills/hyperframes-registry/SKILL.md` (lines 10–11):
+> - **Blocks** — standalone sub-compositions (own dimensions, duration, timeline).
+>   Included via `data-composition-src` in a host composition.
+> - **Components** — effect snippets (no own dimensions). Pasted directly into
+>   a host composition's HTML. They **inherit the host's dimensions and duration**.
+
+### Tareabox split
+
+| Type | Count | Categories | Background | How to wire |
+|---|---|---|---|---|
+| **Block** | 61 | `conversationapp`, `layout` | Own bg (full-screen scene) | `data-composition-src` referencing `compositions/<name>.html` |
+| **Component** | 72 | `text`, `visual`, `data` | **Transparent** (overlay) | Paste HTML+CSS+JS inline into a host composition's `<div data-composition-id>` |
+
+### How to tell them apart
+
+1. Check the item in `registry/registry.json`: `"type": "hyperframes:block"` or `"hyperframes:component"`.
+2. Or check the install path: blocks go to `compositions/<name>.html`, components go to `compositions/components/<name>.html`.
+3. Or check the `registry-item.json` of the installed item: `type` field.
+
+### Why this matters (the "PIP problem")
+
+A block has its own background and fills its declared dimensions. If you mount
+a block on top of another block (e.g. a `text-*` block over a `layout-video-pip-03-tb`),
+the block's bg **covers** what's below it.
+
+Components have `background: transparent` and are designed to **layer** on top
+of a block, a video, or any other composition without covering it.
+
+**Rule:** if you want to put text/data/visual ON TOP of a video or another
+scene, use a **component** — not a block.
+
+### Wiring reference
+
+Read these official references from the `hyperframes-registry` skill before wiring:
+
+- `references/wiring-blocks.md` — for blocks (`data-composition-src` pattern)
+- `references/wiring-components.md` — for components (paste-inline pattern)
+- `references/install-locations.md` — where files land after `hyperframes add`
+
+---
+
+## Video Cases — identify first, then route
+
+Before planning anything, identify which case the video is. Each case has
+a different workflow, different skills to read, and different references.
+Ask the user enough to classify, then follow that case's path.
+
+### Case A: "Show / episodio con material propio"
+
+The user already has footage: talking head video, screenshots, screencast,
+audio recording. The job is to organize that material and add Tareabox
+blocks as visual effects on top.
+
+- **Workflow:** this skill's STEP 1–6
+- **HyperFrames skills:** `SKILL.md` (composition structure), `patterns.md`
+  (PIP, layering), `references/video-composition.md` (frame rules),
+  `references/motion-principles.md` (animation)
+- **Key task:** read each block before layering (rule 10), coordinate
+  avatar/camera with blocks, sync audio
+- **NOT needed:** capture, SCRIPT.md, STORYBOARD.md, website pipeline
+
+### Case B: "Video rápido con bloques"
+
+The user has an idea and content (text, topic, brand) but no footage.
+The video is built entirely from Tareabox blocks — text effects, data
+visualizations, layouts.
+
+- **Workflow:** this skill's STEP 1–6
+- **HyperFrames skills:** `SKILL.md` (composition), `references/typography.md`,
+  `references/video-composition.md`
+- **Key task:** pick blocks that match the format, customize text + brand,
+  chain timing
+- **NOT needed:** capture, complex pipeline, PIP coordination (no avatar)
+
+### Case C: "Website → video"
+
+The user has a URL and wants to turn that site into a video. Full
+production from capture to render.
+
+- **Workflow:** HyperFrames 7-step pipeline (NOT this skill's steps)
+- **Reference:** https://hyperframes.mintlify.app/guides/pipeline
+- **Skills:** `website-to-hyperframes` skill, `hyperframes` skill,
+  `hyperframes-media` skill (TTS, transcribe), `hyperframes-cli` skill
+  (capture, lint, validate, snapshot, render)
+- **Artifacts:** `capture/`, `DESIGN.md`, `SCRIPT.md`, `STORYBOARD.md`,
+  `narration.wav`, `transcript.json`, `compositions/`, snapshots
+- **Tareabox blocks:** can be used in Step 6 (Build) if they fit
+
+### Case D: "Lanzamiento de producto / narrativo complejo"
+
+Full production video — product launch, brand film, narrative with 3+
+scenes built from scratch. No pre-made blocks or mixed with custom.
+
+- **Workflow:** HyperFrames 7-step pipeline
+- **Reference:** https://hyperframes.mintlify.app/guides/pipeline
+- **Skills:** `hyperframes` skill (full), `hyperframes-media`,
+  `hyperframes-cli`, `references/beat-direction.md`,
+  `references/prompt-expansion.md`, `references/narration.md`,
+  `references/transitions.md`
+- **Tareabox blocks:** optional — can supplement custom scenes
+
+### Case E: "Animación simple"
+
+One single effect or composition — a title card, a lower third, a
+5-second animation. No workflow needed.
+
+- **Workflow:** none — build the composition directly
+- **Skills:** `hyperframes` SKILL.md
+- **NOT needed:** any pipeline or multi-step workflow
+
+### How to classify
+
+At the start of STEP 5.1, before asking about duration or mood, ask:
+
+> What does the user have? Footage? A URL? Just an idea?
+
+- Has footage (video, screenshots, audio) → **Case A**
+- Has an idea, no footage → **Case B**
+- Has a URL to capture → **Case C**
+- Needs full custom production → **Case D**
+- Needs a single quick animation → **Case E**
+
+Write down the case before continuing. The rest of the workflow follows
+that case's path.
+
+---
+
+## Editorial preferences (optional — Tareabox / Natalie Digital style)
+
+> The following are **editorial decisions by the author**, not technical rules.
+> Follow them if you want videos in the Tareabox / Natalie Digital style.
+> Skip them if you have your own editorial criteria — the technical core
+> works without this section.
+
+### Visual variety
+
+A video is NOT a slideshow of animated text. Apply these constraints to the block plan:
+
+- **Max 3 consecutive blocks from the same category.** After 3 text items in
+  a row, the next must be layout, conversationapp, visual, data, or an avatar
+  fullscreen beat. No exceptions.
+- **Use at least 3 categories** in any video longer than 15 seconds. The 5
+  Tareabox categories are: text, layout, conversationapp, visual, data. Mix them.
+- **Avatar fullscreen beats** — when the user has talking-head video, schedule
+  fullscreen moments for personal or emotional phrases. Avatar should be fully
+  visible (fullscreen or large PIP) for at least **25% of total video time**.
+  Tiny PIP alone is not enough.
+- **Browse the FULL catalog before planning.** Run `npx hyperframes catalog`,
+  read every item name and description, then decide. If you only pick from
+  items you've used before, you're doing it wrong.
+- **Rhythm check.** Before building, write out the category sequence as a
+  string (e.g. `A-L-T-C-D-A-V-T`). If more than 3 of the same letter appear
+  consecutively, redesign.
+
+### Block-selection examples (content → item)
+
+How Rule 12 ("Match block to content") looks in practice in the Tareabox style:
+
+- *"Videos guardados"* → YouTube Watch Later layout, not a text block.
+- *"Me da pereza"* → avatar fullscreen (emotion), not neon text.
+- *"20, 30, 45 minutos"* → data metric flip, not a morph effect.
+
+The pattern: pick the item whose visual **reinforces the speaker's message**,
+not the one that looks cool in isolation.
+
+### Recipes (ready-made video structures)
+
+#### Recipe 1 — "AI News Short" (vertical 9:16)
+1. `text-burst-creativa-27-tb` — hook / opening line
+2. `text-popup-words-28-tb` — the key message, word by word
+3. `visual-gif-stickers-08-tb` — reaction close
+
+#### Recipe 2 — "Explainer" (landscape 16:9)
+1. `layout-yt-notebook-steps-10-tb` — the steps
+2. `data-checklist-02-tb` — a checklist summary
+3. `layout-yt-tier-list-08-tb` — a ranking / closing
+
+To use a recipe: install its items, mount them in order (chaining `data-start`),
+and customize each with the user's content and brand.
+
+> More recipes can be added over time.
+
+---
+
+## HyperFrames Skill Catalog (mandatory reference)
+
+Composition rules live in the `hyperframes` skill. Install/wire rules for
+blocks and components live in the `hyperframes-registry` skill. Read the
+documents that match what you're building — **before writing code, not
+after.** Do not guess. Do not assume. If a document covers the topic, open
+it and follow it.
+
+Base path: the HyperFrames skills directory (resolved at runtime via the
+skill loader — use the same path the agent uses to read each `SKILL.md`).
+
+### When to read what
+
+| You're doing this | Skill | Read |
+|---|---|---|
+| **Any composition** (always) | `hyperframes` | `SKILL.md`, `references/video-composition.md` |
+| Installing an item (`hyperframes add`) | `hyperframes-registry` | `SKILL.md`, `references/install-locations.md` |
+| Wiring a **block** into a composition | `hyperframes-registry` | `references/wiring-blocks.md` |
+| Wiring a **component** (paste-inline) | `hyperframes-registry` | `references/wiring-components.md` |
+| Discovering items by type/tag | `hyperframes-registry` | `references/discovery.md` |
+| Choosing colors/fonts (no `design.md`) | `hyperframes` | `house-style.md`, `visual-styles.md` |
+| Choosing colors/fonts (with picker) | `hyperframes` | `references/design-picker.md` |
+| Multi-scene video, planning beats | `hyperframes` | `references/beat-direction.md`, `references/prompt-expansion.md` |
+| PIP, avatar, text-behind-subject, layering | `hyperframes` | `patterns.md` |
+| Animations, entrance/exit tweens, eases | `hyperframes` | `references/motion-principles.md` |
+| Scene transitions (crossfade, wipe, push) | `hyperframes` | `references/transitions.md` |
+| Typography, font sizes, font choice | `hyperframes` | `references/typography.md` |
+| Captions / subtitles synced to audio | `hyperframes` | `references/captions.md`, `references/transcript-guide.md` |
+| Caption animation style (energy, rhythm) | `hyperframes` | `references/dynamic-techniques.md` |
+| Marker highlights (underline, circle, scribble) | `hyperframes` | `references/css-patterns.md` |
+| Data/stats on screen (numbers, metrics) | `hyperframes` | `data-in-motion.md` |
+| Voiceover / narration script | `hyperframes` | `references/narration.md` |
+| Audio-reactive visuals (beat sync, glow) | `hyperframes` | `references/audio-reactive.md` |
+| Visual techniques (parallax, split, reveal) | `hyperframes` | `references/techniques.md` |
+
+### Skill checker (STEP 6 verification)
+
+Before presenting the video as done, list which `hyperframes` skill
+documents you read during this build:
+
+```
+HyperFrames skills used:
+  ✓ SKILL.md — composition structure, timeline, data attributes
+  ✓ references/video-composition.md — video frame rules
+  ✓ patterns.md — PIP coordination with blocks
+  ✗ references/transitions.md — not needed (blocks handle their own transitions)
+```
+
+If a document was relevant but NOT read, go back, read it, and fix what
+you missed before presenting.
 
 ---
 
@@ -202,27 +522,62 @@ Show the plan and ask: *"¿Te gusta este plan, o cambiamos algo?"*
 
 ### 5.5 — Build it
 
-1. **Install** each block from the plan: `npx hyperframes add <block-name>`.
+1. **Install** each item from the plan: `npx hyperframes add <name>`.
+   Works for both blocks and components — the CLI auto-detects the type
+   and places the file in `compositions/` (blocks) or `compositions/components/`
+   (components).
 2. **Voiceover** (if chosen): generate with `npx hyperframes tts` from the
    script, or place the user's own audio file.
-3. **Mount** each block in the video file. Example shape:
+3. **Mount each item** — the mounting pattern differs by type:
+
+   **Blocks** — mount via `data-composition-src` (the block keeps its own bg, timeline, dimensions):
 
    ```html
    <div class="clip"
-        data-composition-id="data-checklist-02-tb"
-        data-composition-src="compositions/data-checklist-02-tb.html"
-        data-start="0" data-duration="3" data-track-index="1"
+        data-composition-id="layout-video-pip-03-tb"
+        data-composition-src="compositions/layout-video-pip-03-tb.html"
+        data-start="0" data-duration="5" data-track-index="1"
         data-width="1920" data-height="1080"></div>
    ```
 
-   - `data-composition-id` = the block's id (file name without `.html`).
-   - `data-width`/`data-height`/`data-duration` come from the block's
-     `registry-item.json`. `data-width`/`data-height` **must match the format**
-     (1920×1080 landscape, 1080×1920 vertical) — do not copy the example blindly.
-   - `data-start`: chain blocks — next `data-start` = previous `data-start` +
+   **Components** — paste inline INSIDE a host composition's `<div data-composition-id>`.
+   They are transparent overlays that share the host's timeline and dimensions.
+   Per the official `wiring-components.md`:
+   - HTML elements → into the host's `<div data-composition-id="...">`
+   - `<style>` block → into the host's styles
+   - `<script>` setup → into the host's `<script>`, before the timeline code
+   - Use a higher `z-index` to stack the component on top of the block below it
+   - Run `data-start` / `data-duration` inside the host's GSAP timeline, not on the component div
+
+   Layering a text component on top of a PIP block (the canonical use case
+   that motivated splitting blocks/components in Tareabox):
+
+   ```html
+   <div class="clip"
+        data-composition-id="layout-video-pip-03-tb"
+        data-composition-src="compositions/layout-video-pip-03-tb.html"
+        data-start="0" data-duration="5" data-track-index="1"
+        data-width="1920" data-height="1080"></div>
+
+   <!-- The text component sits on track-index 2, on top of the PIP block.
+        Read compositions/components/text-outline-to-fill-13-tb.html and
+        either include it via data-composition-src or copy its inner parts
+        into the host according to wiring-components.md. -->
+   ```
+
+   - `data-composition-id` = the item's id (file name without `.html`).
+   - For **blocks**, `data-width`/`data-height`/`data-duration` come from the
+     block's `registry-item.json`. `data-width`/`data-height` **must match the
+     format** (1920×1080 landscape, 1080×1920 vertical) — do not copy blindly.
+   - For **components**, dimensions/duration come from the **host** composition
+     (components do not declare their own — official `hyperframes-registry`
+     skill, `SKILL.md:11`).
+   - `data-start`: chain items — next `data-start` = previous `data-start` +
      previous `data-duration`.
-4. **Customize** each block via its `🎨 CUSTOMIZE HERE` section — the user's
-   texts and the brand colors from `design.md`. Never touch other code.
+4. **Customize** each block preferring the `🎨 CUSTOMIZE HERE` section — the
+   user's texts, brand colors from `design.md`, and layout variables (width,
+   align, offsets) when composing with other elements. Editing effect code is
+   allowed if necessary, but riskier — prefer variables first.
    **If a block uses video or images:** it came with sample (demo) media —
    replace it with the user's own media (overwrite the file, keeping the same
    file name). If the user has no media for it, that block should not be in the
@@ -272,41 +627,34 @@ tool? Do part A only.)
 - [ ] STEP 5.4 — a plan was shown and the user approved it
 - [ ] STEP 5.5 — blocks installed with `npx hyperframes add`, mounted (not recreated)
 - [ ] STEP 5.5 — NO demo/sample media left in the final video (only the user's media)
+- [ ] STEP 5.5 — every block was read before adding layers on top (rule 10); no double PIP, no covered content
+- [ ] STEP 5.5 — *(editorial style only)* variety check passed: max 3 consecutive same-category items; ≥3 categories used; rhythm string written and verified. Skip if not applying Tareabox editorial style.
 - [ ] STEP 5.5 — `data-width`/`data-height` match the format; `lint` → 0 errors
 - [ ] STEP 6 — verification done
+- [ ] STEP 6 — HyperFrames skill checker passed (list skills read, confirm none missing)
 - [ ] The user was spoken to in plain, non-technical language throughout
-
----
-
-## Recipes (ready-made video structures)
-
-### Recipe 1 — "AI News Short" (vertical 9:16)
-1. `text-burst-creativa-27-tb` — hook / opening line
-2. `text-popup-words-28-tb` — the key message, word by word
-3. `visual-gif-stickers-08-tb` — reaction close
-
-### Recipe 2 — "Explainer" (landscape 16:9)
-1. `layout-yt-notebook-steps-10-tb` — the steps
-2. `data-checklist-02-tb` — a checklist summary
-3. `layout-yt-tier-list-08-tb` — a ranking / closing
-
-To use a recipe: install its blocks, mount them in order (chaining `data-start`),
-and customize each with the user's content and brand.
-
-> More recipes can be added over time.
 
 ---
 
 ## The Tareabox pack
 
-100+ blocks across these categories: **conversationapp** (animated chats),
-**layout** (YouTube layouts, steps, comparisons, cards, tier lists), **text**
-(animated text effects), **visual** (overlays, GIF stickers, callouts), **data**
-(checklists, metrics). Full list: the registry's `registry.json`.
+133 items total — 61 blocks + 72 components — across 5 categories.
 
-Each block is a finished HyperFrames composition — reuse it, never recreate it.
-It has a `🎨 CUSTOMIZE HERE` section for colors and text, and renders correctly
-when mounted as a sub-composition.
+**Blocks (61) — full-screen scenes with their own bg:**
+- **conversationapp** (24) — iMessage, WhatsApp, Slack, Discord, Instagram DM, Twitter, iOS/Android notifs
+- **layout** (37) — YouTube layouts, steps, comparisons, cards, tier lists, video PIP/hero/hook
+
+**Components (72) — transparent overlays meant to layer on top:**
+- **text** (46) — animated text effects (typewriter, warp, neon, kinetic, glitch, chapter…)
+- **visual** (22) — overlays, GIF stickers, callouts, indicators (zoom, timestamp, progress, keyboard)
+- **data** (4) — checklists, metric flip counters
+
+Full list: the registry's `registry.json` (`type` field tells you block vs component).
+
+Each item is a finished HyperFrames asset — reuse it, never recreate it.
+It has a `🎨 CUSTOMIZE HERE` section for colors and text. Blocks mount via
+`data-composition-src`; components paste inline into a host (see "Blocks vs
+Components" above and the official `hyperframes-registry` skill).
 
 ---
 
