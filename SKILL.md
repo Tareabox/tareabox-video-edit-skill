@@ -134,6 +134,29 @@ algo low-level que Tareabox no tiene.
     For style-specific guidance (visual variety, avatar coverage,
     rhythm check, content-matching examples, recipes), see the
     optional **Editorial preferences** section below.
+13. **Prevent Chrome compositor overload before preview/render.**
+    Chrome (the engine behind both preview and render) keeps every `<video>`
+    element loaded in memory. With more than ~8 concurrent `<video>` elements
+    in a composition, the preview freezes and render fails with
+    `Runtime.callFunctionOn timed out` (documented HyperFrames bugs:
+    [#521](https://github.com/heygen-com/hyperframes/issues/521),
+    [#1072](https://github.com/heygen-com/hyperframes/issues/1072)).
+    To prevent this:
+    - After installing each block, audit its internal `<video>` elements.
+      If any won't be visually rendered (broken path, redundant with a
+      root-level avatar, hidden by another layer), **delete the `<video>`
+      tag from the block file** and replace with `<!-- video removed -->`.
+      Chrome loads them regardless of visibility — dead videos cost the
+      same as live ones.
+    - On every `<video>` that DOES remain in the composition, add
+      `data-volume="0"`. The HTML `muted` attribute only silences the
+      browser playback; the HyperFrames renderer still mixes the video's
+      audio track into the output, causing doubled audio when the same
+      file is also used as an `<audio>` source.
+    - Count total `<video>` elements in `compositions/*.html` and
+      `index.html` before running `preview` or `render`. If the count
+      exceeds 8 for a composition under 1 minute, repeat the audit
+      step more aggressively.
 
 ---
 
